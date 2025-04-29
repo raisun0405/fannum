@@ -1,0 +1,118 @@
+package raisun;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Image;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+public class BacteriaInfo implements ListSelectionListener {
+    JList<String> jl;
+    JTextArea ta;
+    JLabel l1;
+    JLabel imageLabel;
+
+    BacteriaInfo() {
+        // Create main frame
+        JFrame f = new JFrame("Bacteria Information");
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // Create bacteria list
+        String arr[] = {"Ecoli", "Bacillus"};
+        jl = new JList<>(arr);
+        jl.addListSelectionListener(this);
+        jl.setFont(new Font("Arial", Font.PLAIN, 14));
+        JScrollPane listScroller = new JScrollPane(jl);
+        listScroller.setPreferredSize(new Dimension(120, 200));
+        
+        // Create image section
+        JPanel imagePanel = new JPanel(new BorderLayout());
+        l1 = new JLabel("Image:", JLabel.CENTER);
+        l1.setFont(new Font("Arial", Font.BOLD, 14));
+        imageLabel = new JLabel("", JLabel.CENTER);
+        imagePanel.add(l1, BorderLayout.NORTH);
+        imagePanel.add(imageLabel, BorderLayout.CENTER);
+        
+        // Create text area for information
+        ta = new JTextArea();
+        ta.setFont(new Font("Arial", Font.PLAIN, 12));
+        ta.setLineWrap(true);
+        ta.setWrapStyleWord(true);
+        ta.setEditable(false);
+        JScrollPane textScroller = new JScrollPane(ta);
+        
+        // Create split panes with better dimensions
+        JSplitPane topPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScroller, imagePanel);
+        topPane.setResizeWeight(0.2); // Give less weight to the list
+        
+        JSplitPane mainPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPane, textScroller);
+        mainPane.setResizeWeight(0.6); // Give more weight to the top section
+        
+        // Add to frame and display
+        f.add(mainPane);
+        f.setSize(600, 500);
+        f.setLocationRelativeTo(null); // Center on screen
+        f.setVisible(true);
+        
+        // Set divider locations after frame is visible
+        SwingUtilities.invokeLater(() -> {
+            topPane.setDividerLocation(0.25);
+            mainPane.setDividerLocation(0.65);
+        });
+    }
+
+    public static void main(String[] args) {
+        try {
+            // Use system look and feel
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            // Create an instance of the BacteriaInfo class
+            SwingUtilities.invokeLater(() -> new BacteriaInfo());
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        if (e.getValueIsAdjusting()) return;
+        
+        try {
+            String selection = jl.getSelectedValue();
+            if (selection == null) return;
+            
+            if (selection.equals("Ecoli")) {
+                ta.setText("Escherichia coli (E.coli) E. coli is a widespread bacterium, \n"
+                        + "with many strains found in the digestive tract of humans and animals.\n "
+                        + "E. coli can be transmitted through contaminated food \n"
+                        + "(especially undercooked meat, raw milk, and contaminated vegetables), water, and person-to-person contact.");
+                
+                loadImage("C:\\Users\\rohan\\Desktop\\BacteriaInfo\\ecoli.jpg");
+            }
+            else if (selection.equals("Bacillus")) {
+                ta.setText("Bacillus is a genus of rod-shaped, Gram-positive bacteria belonging to the phylum Bacillota.\n"
+                        + "These bacteria are known for their ability to form endospores, \n"
+                        + "which are highly resistant structures that allow them to survive in harsh environments.\n"
+                        + "Many Bacillus species are aerobic or facultatively anaerobic, meaning they can grow with or without oxygen.");
+                
+                loadImage("C:\\Users\\rohan\\Desktop\\BacteriaInfo\\bacillus.jpg");
+            }
+        } catch (Exception ex) {
+            System.out.println("Error processing selection: " + ex.getMessage());
+        }
+    }
+    
+    private void loadImage(String path) {
+        try {
+            ImageIcon icon = new ImageIcon(path);
+            Image img = icon.getImage();
+            Image scaled = img.getScaledInstance(300, 200, Image.SCALE_SMOOTH);
+            imageLabel.setIcon(new ImageIcon(scaled));
+        } catch (Exception ex) {
+            System.out.println("Error loading image: " + ex.getMessage());
+            imageLabel.setIcon(null);
+            imageLabel.setText("Image not found");
+        }
+    }
+}
