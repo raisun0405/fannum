@@ -1,95 +1,59 @@
-package com.jdbc.practice;
+package lallala;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-public class JDBCCRUDApp {
-    public static void main(String[] args) {
-        try {
-            // Register JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
+public class fuck {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+        // Register the MySQL driver
+        Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // Connect to database
-            System.out.println("Connecting to database...");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bacteria", "root", "4712");
+        // Establish connection
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pracctical", "root", "4712");
 
-            // Create statement
-            Statement st = con.createStatement();
-            
-            // Check if records exist and clear if needed
-            ResultSet checkRS = st.executeQuery("SELECT COUNT(*) FROM bacteria_info");
-            checkRS.next();
-            int count = checkRS.getInt(1);
-            if (count > 0) {
-                System.out.println("Clearing existing data...");
-                st.executeUpdate("DELETE FROM bacteria_info");
-            }
-            
-            // CREATE: Insert records
-            System.out.println("Inserting records...");
-            String insertQuery = "INSERT INTO bacteria_info VALUES('Streptococcus', 'Prokaryotic', 1, 'circle')";
-            st.executeUpdate(insertQuery);
-            
-            insertQuery = "INSERT INTO bacteria_info VALUES('E.coli', 'Prokaryotic', 3, 'rod shaped')";
-            st.executeUpdate(insertQuery);
+        // Define SQL queries
+        String query1 = "CREATE TABLE bacteriax(name VARCHAR(100), type VARCHAR(100), size INT, shape VARCHAR(100));";
+        String query2 = "INSERT INTO bacteriax(name,type,size,shape) VALUES('Streptococcus','Prokaryotic',1,'circle');";
+        String query3 = "INSERT INTO bacteriax(name,type,size,shape) VALUES('E.coli','Prokaryotic',3,'rod shaped');";
+        String query4 = "SELECT * FROM Pracctical.bacteriax";
+        String query5 = "DELETE FROM bacteriax WHERE name = 'E.coli';";
 
-            insertQuery = "INSERT INTO bacteria_info VALUES('Staphylococcus aureus', 'Prokaryotic', 2, 'spherical')";
-            st.executeUpdate(insertQuery);
+        // Create statement
+        Statement st = con.createStatement();
 
-            insertQuery = "INSERT INTO bacteria_info VALUES('Bacillus subtilis', 'Prokaryotic', 4, 'rod shaped')";
-            st.executeUpdate(insertQuery);
+        // Execute queries
+        boolean sel = st.execute(query1);
+        System.out.println(sel);
 
-            insertQuery = "INSERT INTO bacteria_info VALUES('Vibrio cholerae', 'Prokaryotic', 1, 'comma shaped')";
-            st.executeUpdate(insertQuery);
+        int cnt = st.executeUpdate(query2);
+        System.out.println(cnt);
 
-            insertQuery = "INSERT INTO bacteria_info VALUES('Helicobacter pylori', 'Prokaryotic', 1, 'spiral shaped')";
-            st.executeUpdate(insertQuery);
+        int cnt1 = st.executeUpdate(query3);
+        System.out.println(cnt1);
 
-            insertQuery = "INSERT INTO bacteria_info VALUES('Mycobacterium tuberculosis', 'Prokaryotic', 1, 'rod shaped')";
-            st.executeUpdate(insertQuery);
-
-            insertQuery = "INSERT INTO bacteria_info VALUES('Clostridium botulinum', 'Prokaryotic', 1, 'rod shaped')";
-            st.executeUpdate(insertQuery);
-
-
-            // READ: Select records
-            System.out.println("Reading records...");
-            String query = "SELECT * FROM bacteria_info";
-            ResultSet rs = st.executeQuery(query);
-            
-            // Display records
-            while(rs.next()) {
-                System.out.println("Name: " + rs.getString("name") + " | Type: " + rs.getString("type") + 
-                                 " | Size: " + rs.getInt("size") + " | Shape: " + rs.getString("shape"));
-            }
-            
-            // UPDATE: Update a record
-            System.out.println("Updating records...");
-            String updateQuery = "UPDATE bacteria_info SET size=2 WHERE name='Streptococcus'";
-            int rowsUpdated = st.executeUpdate(updateQuery);
-            System.out.println(rowsUpdated + " row(s) updated");
-            
-            // DELETE: Delete a record
-            System.out.println("Deleting records...");
-            String deleteQuery = "DELETE FROM bacteria_info WHERE name='E.coli'";
-            int rowsDeleted = st.executeUpdate(deleteQuery);
-            System.out.println(rowsDeleted + " row(s) deleted");
-            
-            // Read again after modifications
-            System.out.println("Final data:");
-            rs = st.executeQuery(query);
-            while(rs.next()) {
-                System.out.println("Name: " + rs.getString("name") + " | Type: " + rs.getString("type") + 
-                                 " | Size: " + rs.getInt("size") + " | Shape: " + rs.getString("shape"));
-            }
-            
-            // Close resources
-            checkRS.close();
-            rs.close();
-            st.close();
-            con.close();
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+        // Retrieve data before deletion
+        ResultSet rs = st.executeQuery(query4);
+        while (rs.next()) {
+            System.out.println("Name: " + rs.getString("name") + ", Type: " + rs.getString("type") +
+                    ", Size: " + rs.getInt("size") + ", Shape: " + rs.getString("shape"));
         }
+
+        // Delete record
+        int del = st.executeUpdate(query5);
+        System.out.println(del);
+
+        // Retrieve data after deletion
+        ResultSet rs1 = st.executeQuery(query4);
+        while (rs1.next()) {
+            System.out.println("Name: " + rs1.getString("name") + ", Type: " + rs1.getString("type") +
+                    ", Size: " + rs1.getInt("size") + ", Shape: " + rs1.getString("shape"));
+        }
+
+        // Close connections
+        con.close();
+        st.close();
     }
 }
