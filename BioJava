@@ -1,0 +1,39 @@
+package biopack;
+
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
+import org.biojava.nbio.core.sequence.DNASequence;
+import org.biojava.nbio.core.sequence.compound.NucleotideCompound;
+
+public class BioJ {
+	
+	public static void main(String[] args) {
+		String DnaSequence1="ATCCGGCAGGCATGCAACT";
+		
+		DNASequence seq=null;
+		try {
+			seq=new DNASequence(DnaSequence1);
+		}
+		catch (CompoundNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		double getContent = calculateGCContent(seq);
+		System.out.println("GC Content: "+getContent);
+	}
+	
+	private static double calculateGCContent(DNASequence seq) {
+		int GCCount=0;
+		
+		for(NucleotideCompound nc:seq) {
+			
+			char base =nc.toString().charAt(0);
+			if(base == 'G' || base == 'C') {
+				GCCount++;
+			}
+		}
+		
+		return (double)GCCount;
+
+	}
+	
+}
